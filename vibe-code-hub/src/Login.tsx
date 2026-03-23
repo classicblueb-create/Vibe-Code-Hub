@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
 import { useNavigate } from 'react-router-dom';
-import { Lock } from 'lucide-react';
+import { Lock, Eye, EyeOff } from 'lucide-react';
+
+const SAVED_EMAIL_KEY = 'vcb_saved_email';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const saved = localStorage.getItem(SAVED_EMAIL_KEY);
+    if (saved) setEmail(saved);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +26,7 @@ export const Login: React.FC = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      localStorage.setItem(SAVED_EMAIL_KEY, email);
       navigate('/');
     } catch (err: any) {
       const code = err?.code ?? '';
@@ -56,7 +65,7 @@ export const Login: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-zinc-300 mb-2">อีเมล</label>
             <input
@@ -66,19 +75,31 @@ export const Login: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               placeholder="กรอกอีเมลของคุณ"
+              autoComplete="email"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-zinc-300 mb-2">รหัสผ่าน</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-              placeholder="กรอกรหัสผ่านของคุณ"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                placeholder="กรอกรหัสผ่านของคุณ"
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors p-1"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           <button
@@ -90,7 +111,7 @@ export const Login: React.FC = () => {
           </button>
         </form>
 
-        <div className="mt-8 text-center text-xs text-zinc-500">
+        <div className="mt-8 text-center text-xs text-zinc-500 space-y-1">
           <p>การเข้าถึงจำกัดเฉพาะสมาชิกที่ได้รับอนุญาตเท่านั้น</p>
           <p>ไม่อนุญาตให้สมัครด้วยตนเอง</p>
         </div>
