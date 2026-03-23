@@ -1,0 +1,79 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile containing role information.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "user"],
+          "description": "The user's role."
+        }
+      },
+      "required": ["email", "role"]
+    },
+    "AccessCode": {
+      "title": "AccessCode",
+      "description": "Authorized user email for VIP access.",
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "format": "email",
+          "description": "The email address of the authorized user."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the access code was created."
+        }
+      },
+      "required": ["username", "createdAt"]
+    },
+    "UserProgress": {
+      "title": "UserProgress",
+      "description": "Tracks video completion status for a user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user."
+        },
+        "moduleId": {
+          "type": "string",
+          "description": "The ID of the module."
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "Whether the module is completed."
+        },
+        "completedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the module was completed."
+        }
+      },
+      "required": ["userId", "moduleId", "completed"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user roles."
+    },
+    "/accessCodes/{accessCodeId}": {
+      "schema": { "$ref": "#/entities/AccessCode" },
+      "description": "Stores emails of users authorized to access the VIP portal."
+    },
+    "/userProgress/{progressId}": {
+      "schema": { "$ref": "#/entities/UserProgress" },
+      "description": "Stores user video progress."
+    }
+  }
+}
