@@ -26,6 +26,7 @@ interface ModuleData {
   playbackId?: string;
   youtubeId?: string;
   subEpisodes?: SubEpisode[];
+  comingSoon?: boolean;
 }
 
 const MODULES_DATA: ModuleData[] = [
@@ -98,6 +99,18 @@ const MODULES_DATA: ModuleData[] = [
     title: "บทจบและการดูแลต่อเนื่อง",
     description: "แนะนำการดูแลต่อเนื่องและคลังข้อมูลที่อัพเดทตามเทรนด์ให้ผู้เรียนทุกคนเข้าถึงได้ตลอดชีพ",
     youtubeId: "3-wif9y_o78"
+  },
+  {
+    id: 11,
+    title: "อัพเดทฟีจเจอร์ใหม่ AI Studio สร้างเว็บเต็มรูปแบบ",
+    description: "เนื้อหาอัพเดทล่าสุดเกี่ยวกับฟีจเจอร์ใหม่ใน Google AI Studio สำหรับการสร้างเว็บไซต์เต็มรูปแบบ กำลังจะมาเร็วๆ นี้",
+    comingSoon: true
+  },
+  {
+    id: 12,
+    title: "อัพเดทฟีจเจอร์ใหม่ใน Stitch",
+    description: "เนื้อหาอัพเดทล่าสุดเกี่ยวกับฟีจเจอร์ใหม่ใน Stitch สำหรับการออกแบบ UI ขั้นสูง กำลังจะมาเร็วๆ นี้",
+    comingSoon: true
   }
 ];
 
@@ -113,7 +126,7 @@ export const Dashboard: React.FC = () => {
   const [playerReady, setPlayerReady] = useState(false);
 
   const allPlayableItems = useMemo(() => {
-    return MODULES_DATA.flatMap(m => {
+    return MODULES_DATA.filter(m => !m.comingSoon).flatMap(m => {
       if (m.subEpisodes) {
         return m.subEpisodes.map(s => ({
           moduleId: m.id,
@@ -703,6 +716,30 @@ export const Dashboard: React.FC = () => {
           {/* Module Cards Grid — shown only when not playing */}
           {!playingModuleId && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {MODULES_DATA.map((module) => {
+              if (module.comingSoon) {
+                return (
+                  <div key={module.id} className="bg-zinc-900/60 rounded-2xl overflow-hidden border border-zinc-800/60 opacity-75">
+                    <div className="aspect-video bg-zinc-800/50 relative flex items-center justify-center overflow-hidden">
+                      <div className="absolute inset-0 bg-zinc-800/50" />
+                      <div className="relative z-10 flex flex-col items-center gap-2">
+                        <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
+                          <span className="text-amber-400 text-xl">⏳</span>
+                        </div>
+                        <span className="text-amber-400 text-xs font-semibold tracking-wide">กำลังมาเร็วๆนี้</span>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="px-2 py-0.5 text-xs font-medium rounded bg-amber-500/10 text-amber-400">บทพิเศษ</span>
+                        <span className="text-xs text-zinc-500">บทที่ {module.id}</span>
+                      </div>
+                      <h3 className="font-semibold text-sm leading-snug text-zinc-400">{module.title}</h3>
+                      <p className="mt-2 text-xs text-zinc-600 leading-relaxed line-clamp-2">{module.description}</p>
+                    </div>
+                  </div>
+                );
+              }
+
               if (module.subEpisodes) {
                 const allSubDone = module.subEpisodes.every(s => isItemCompleted(`${module.id}-${s.id}`));
                 const hasYoutube = module.subEpisodes.some(s => s.youtubeId);
