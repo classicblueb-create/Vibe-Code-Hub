@@ -25,17 +25,23 @@ A modern web application for running and deploying AI Studio apps. Built with Re
 
 ## Project Structure
 ```
+vercel.json                      # Root Vercel config (rootDirectory: vibe-code-hub)
 vibe-code-hub/
-├── src/                    # Frontend source
-│   ├── components/         # Reusable React components
-│   ├── App.tsx             # Main app + routing
-│   ├── AuthContext.tsx     # Firebase auth provider
-│   ├── Dashboard.tsx       # Main authenticated view
-│   ├── Login.tsx           # Auth view
-│   ├── firebase.ts         # Firebase init
-│   └── index.css           # Global styles
-├── server.ts               # Express server (API + Vite dev middleware)
-├── vite.config.ts          # Vite config
+├── api/                         # Vercel serverless functions
+│   ├── health.ts                # GET /api/health
+│   ├── check-env.ts             # GET /api/check-env
+│   └── mux/sign/[playbackId].ts # GET /api/mux/sign/:playbackId
+├── src/                         # Frontend source
+│   ├── components/              # Reusable React components
+│   ├── App.tsx                  # Main app + routing
+│   ├── AuthContext.tsx          # Firebase auth provider
+│   ├── Dashboard.tsx            # Main authenticated view
+│   ├── Login.tsx                # Auth view
+│   ├── firebase.ts              # Firebase init
+│   └── index.css                # Global styles
+├── server.ts                    # Express server (API + Vite dev middleware, local dev only)
+├── vite.config.ts               # Vite config
+├── vercel.json                  # Vercel build config + SPA rewrites
 ├── firebase-applet-config.json  # Firebase client config
 └── package.json
 ```
@@ -53,6 +59,14 @@ vibe-code-hub/
 - `MUX_SIGNING_KEY_PRIVATE` - Mux signing key private key
 
 ## Deployment
-- Target: autoscale
+
+### Replit (autoscale)
 - Build: `cd vibe-code-hub && npm run build`
 - Run: `cd vibe-code-hub && NODE_ENV=production npx tsx server.ts`
+
+### Vercel
+- Root `vercel.json` sets `rootDirectory: "vibe-code-hub"`
+- `vibe-code-hub/vercel.json` sets build command, output dir, and SPA rewrites
+- API routes handled as serverless functions in `vibe-code-hub/api/`
+- Set all environment variables (`MUX_*`, `GEMINI_API_KEY`, Firebase vars) in Vercel dashboard
+- Mux SDK uses instance-based `mux.jwt.signPlaybackId()` (not the legacy static `Mux.JWT`)
