@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, onAuthStateChanged, signOut } from 'firebase/auth';
+import { User, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { handleFirestoreError, OperationType } from './firestoreErrorHandler';
@@ -19,6 +19,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // ตั้งให้ Firebase จำ session ไว้ใน device (ไม่ต้อง login ซ้ำทุกครั้ง)
+    setPersistence(auth, browserLocalPersistence).catch(() => {});
+
     let unsubAccess: (() => void) | undefined;
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -34,6 +37,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const email = currentUser.email;
 
           unsubAccess = onSnapshot(collection(db, 'accessCodes'), (snapshot) => {
+            // ถ้า snapshot มาจาก cache และว่างเปล่า ให้รอข้อมูลจาก server ก่อน
+            if (snapshot.empty && snapshot.metadata.fromCache) return;
+
             let hasAccess = false;
             snapshot.forEach((docSnap) => {
               const data = docSnap.data();
