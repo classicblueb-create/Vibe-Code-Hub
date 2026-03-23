@@ -51,7 +51,7 @@ const MODULES_DATA: ModuleData[] = [
     id: 4,
     title: "Module 3: Stitch จัด Vibe หน้าตาให้โดนใจ",
     description: "เสกหน้าเว็บจากจินตนาการ: ใช้ AI Stitch แปลงข้อความ ภาพสเก็ตช์ หรือลิงก์เว็บเป็น UI ที่สวยงาม\nส่งออกไปเขียนโค้ดต่อ: เตรียม UI ส่งออกแบบคลิกเดียวไปยัง Google AI Studio",
-    playbackId: "H017Npef4FfcqKCrU532a01tG8q6UP4qE00WDLHdXzre1o"
+    playbackId: "4Sa4zLVwTcLOK2IctHr6013ie9GMaPHiJlFGj9PzRbXw"
   },
   {
     id: 5,
@@ -84,7 +84,7 @@ const MODULES_DATA: ModuleData[] = [
     description: "นำขึ้นเว็บจริงให้คนทั้งโลกเห็น: 2 เส้นทางหลัก Vercel (สำหรับความยืดหยุ่น) และ Google Cloud Run (สำหรับสายลุยจาก AI Studio)\nการตั้งค่า Billing แบบไม่ช็อก: เปิดระบบคิดเงินใน Google Cloud อย่างปลอดภัย การเช็ก Log และวิธีซ่อน API Key",
     subEpisodes: [
       { id: "ep1", title: "ตอนที่ 1: Deploy แอปสู่โลกกว้าง", youtubeId: "z6EbwFdYTpw" },
-      { id: "ep2", title: "ตอนที่ 2: Deploy แอปสู่โลกกว้าง Part 2 (ด้วย Cloud Run)", youtubeId: "QWBR_nCj5IQ" }
+      { id: "ep2", title: "ตอนที่ 2: Deploy แอปสู่โลกกว้าง Part 2 (ด้วย Cloud Run)", youtubeId: "KOr9HjIbdLQ" }
     ]
   },
   {
