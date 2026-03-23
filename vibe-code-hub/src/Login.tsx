@@ -20,7 +20,20 @@ export const Login: React.FC = () => {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/');
     } catch (err: any) {
-      setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง');
+      const code = err?.code ?? '';
+      if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง');
+      } else if (code === 'auth/user-disabled') {
+        setError('บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
+      } else if (code === 'auth/too-many-requests') {
+        setError('ลองผิดหลายครั้งเกินไป กรุณารอสักครู่แล้วลองใหม่');
+      } else if (code === 'auth/operation-not-allowed' || code === 'auth/configuration-not-found') {
+        setError('ระบบยังไม่เปิดใช้งานการล็อกอินด้วย Email/Password กรุณาติดต่อผู้ดูแลระบบ');
+      } else if (code === 'auth/network-request-failed') {
+        setError('ไม่สามารถเชื่อมต่อได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่');
+      } else {
+        setError(`เกิดข้อผิดพลาด: ${code || 'ไม่ทราบสาเหตุ'} กรุณาติดต่อผู้ดูแลระบบ`);
+      }
     } finally {
       setLoading(false);
     }
