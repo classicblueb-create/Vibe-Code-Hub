@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import { Lock, Eye, EyeOff } from 'lucide-react';
 
 const SAVED_EMAIL_KEY = 'vcb_saved_email';
@@ -13,11 +14,19 @@ export const Login: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user, isVIP, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const saved = localStorage.getItem(SAVED_EMAIL_KEY);
     if (saved) setEmail(saved);
   }, []);
+
+  // เมื่อ auth context ยืนยัน VIP แล้ว ให้ redirect ไป dashboard
+  useEffect(() => {
+    if (!authLoading && user && isVIP) {
+      navigate('/');
+    }
+  }, [authLoading, user, isVIP, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +36,7 @@ export const Login: React.FC = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       localStorage.setItem(SAVED_EMAIL_KEY, email);
-      navigate('/');
+      // ไม่ navigate ที่นี่ — ให้ useEffect ด้านบนจัดการเมื่อ auth context พร้อม
     } catch (err: any) {
       const code = err?.code ?? '';
       if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
@@ -43,10 +52,11 @@ export const Login: React.FC = () => {
       } else {
         setError(`เกิดข้อผิดพลาด: ${code || 'ไม่ทราบสาเหตุ'} กรุณาติดต่อผู้ดูแลระบบ`);
       }
-    } finally {
       setLoading(false);
     }
   };
+
+  const isSubmitting = loading || (!!user && authLoading);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4">
@@ -104,10 +114,10 @@ export const Login: React.FC = () => {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบ'}
+            {isSubmitting ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบ'}
           </button>
         </form>
 
