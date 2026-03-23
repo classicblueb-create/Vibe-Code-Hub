@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { handleFirestoreError, OperationType } from './firestoreErrorHandler';
 
@@ -31,10 +31,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (currentUser) {
         if (currentUser.email) {
-          const q = query(collection(db, 'xaccessCodes'), where('username', '==', currentUser.email));
+          const email = currentUser.email;
 
-          unsubAccess = onSnapshot(q, (snapshot) => {
-            const hasAccess = !snapshot.empty;
+          unsubAccess = onSnapshot(collection(db, 'accessCodes'), (snapshot) => {
+            let hasAccess = false;
+            snapshot.forEach((docSnap) => {
+              const data = docSnap.data();
+              if (Object.values(data).includes(email)) {
+                hasAccess = true;
+              }
+            });
             setIsVIP(hasAccess);
 
             if (!hasAccess) {
@@ -45,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsVIP(false);
             signOut(auth);
             setLoading(false);
-            handleFirestoreError(error, OperationType.LIST, 'xaccessCodes');
+            handleFirestoreError(error, OperationType.LIST, 'accessCodes');
           });
         } else {
           setIsVIP(false);
