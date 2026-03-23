@@ -33,6 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(currentUser);
 
       if (currentUser) {
+        setLoading(true);
         if (currentUser.email) {
           const email = currentUser.email;
 
