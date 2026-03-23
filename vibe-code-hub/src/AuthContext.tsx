@@ -37,8 +37,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const email = currentUser.email;
 
           unsubAccess = onSnapshot(collection(db, 'accessCodes'), (snapshot) => {
-            // ถ้า snapshot มาจาก cache และว่างเปล่า ให้รอข้อมูลจาก server ก่อน
-            if (snapshot.empty && snapshot.metadata.fromCache) return;
+            // ข้าม cache ทุกกรณี — ตัดสินใจเฉพาะจากข้อมูล server จริงเท่านั้น
+            if (snapshot.metadata.fromCache) return;
 
             let hasAccess = false;
             snapshot.forEach((docSnap) => {
