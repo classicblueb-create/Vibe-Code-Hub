@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 import { LogOut, PlayCircle, ShieldCheck, CheckCircle2, Circle, Menu, X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, MessageCircle } from 'lucide-react';
 import { collection, query, where, onSnapshot, doc, setDoc, updateDoc } from 'firebase/firestore';
@@ -192,12 +192,43 @@ export const Dashboard: React.FC = () => {
   const isItemCompleted = (progressKey: string) =>
     progress.find(p => p.moduleId === progressKey)?.completed ?? false;
 
+  const videoPlayerRef = useRef<HTMLDivElement>(null);
+
+  const getThumbnailUrl = (module: ModuleData, subEpisodeId?: string | null): string | null => {
+    if (subEpisodeId && module.subEpisodes) {
+      const sub = module.subEpisodes.find(s => s.id === subEpisodeId);
+      if (sub?.playbackId) return `https://image.mux.com/${sub.playbackId}/thumbnail.jpg?time=10&width=640`;
+      if (sub?.youtubeId) return `https://img.youtube.com/vi/${sub.youtubeId}/mqdefault.jpg`;
+    }
+    if (module.playbackId) return `https://image.mux.com/${module.playbackId}/thumbnail.jpg?time=10&width=640`;
+    if (module.youtubeId) return `https://img.youtube.com/vi/${module.youtubeId}/mqdefault.jpg`;
+    return null;
+  };
+
+  const prevItem = useMemo(() =>
+    currentItemIndex > 0 ? allPlayableItems[currentItemIndex - 1] : null,
+    [currentItemIndex, allPlayableItems]
+  );
+
+  const nextItem = useMemo(() =>
+    currentItemIndex < allPlayableItems.length - 1 ? allPlayableItems[currentItemIndex + 1] : null,
+    [currentItemIndex, allPlayableItems]
+  );
+
   const playItem = (moduleId: number, subEpisodeId: string | null = null) => {
     setPlayingModuleId(moduleId);
     setPlayingSubEpisodeId(subEpisodeId);
     setExpandedModuleIds(prev => new Set([...prev, moduleId]));
     setIsMobileMenuOpen(false);
   };
+
+  useEffect(() => {
+    if (playingModuleId !== null) {
+      setTimeout(() => {
+        videoPlayerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  }, [playingModuleId, playingSubEpisodeId]);
 
   const handleNext = () => {
     if (currentItemIndex < allPlayableItems.length - 1) {
@@ -553,7 +584,7 @@ export const Dashboard: React.FC = () => {
 
           {/* Video Player */}
           {playingModuleId ? (
-            <div className="mb-10 bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800">
+            <div ref={videoPlayerRef} className="mb-10 bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800">
               <div className="aspect-video bg-black flex items-center justify-center">
                 {!playerReady ? (
                   <div className="text-zinc-500 animate-pulse">กำลังโหลดวิดีโอ...</div>
@@ -627,8 +658,50 @@ export const Dashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Module Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {/* When playing: show only prev/next */}
+          {playingModuleId && (prevItem || nextItem) && (
+            <div className="mb-10">
+              <h2 className="text-base font-semibold text-zinc-400 mb-4">บทที่เกี่ยวข้อง</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[prevItem && { item: prevItem, label: 'บทก่อนหน้า' }, nextItem && { item: nextItem, label: 'บทถัดไป' }]
+                  .filter(Boolean)
+                  .map((entry) => {
+                    const { item, label } = entry!;
+                    const mod = MODULES_DATA.find(m => m.id === item.moduleId)!;
+                    const thumb = getThumbnailUrl(mod, item.subEpisodeId);
+                    const progressKey = item.subEpisodeId ? `${item.moduleId}-${item.subEpisodeId}` : item.moduleId.toString();
+                    const isDone = isItemCompleted(progressKey);
+                    return (
+                      <button
+                        key={item.progressKey}
+                        onClick={() => playItem(item.moduleId, item.subEpisodeId ?? null)}
+                        className="flex gap-4 bg-zinc-900 border border-zinc-800 hover:border-indigo-500/40 rounded-2xl overflow-hidden transition-colors text-left group"
+                      >
+                        <div className="relative w-36 shrink-0 bg-zinc-800 overflow-hidden">
+                          {thumb ? (
+                            <>
+                              <img src={thumb} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
+                            </>
+                          ) : (
+                            <div className="absolute inset-0 bg-zinc-800" />
+                          )}
+                          <PlayCircle className="absolute inset-0 m-auto w-8 h-8 text-white/80 group-hover:text-indigo-400 transition-colors drop-shadow z-10" />
+                        </div>
+                        <div className="flex flex-col justify-center py-3 pr-4 min-w-0">
+                          <span className="text-xs text-zinc-500 mb-1">{label}</span>
+                          <span className="text-sm font-medium text-zinc-200 group-hover:text-indigo-300 transition-colors line-clamp-2">{item.title}</span>
+                          {isDone && <span className="mt-1.5 flex items-center gap-1 text-xs text-emerald-400"><CheckCircle2 className="w-3.5 h-3.5" />เรียนจบแล้ว</span>}
+                        </div>
+                      </button>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+
+          {/* Module Cards Grid — shown only when not playing */}
+          {!playingModuleId && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {MODULES_DATA.map((module) => {
               if (module.subEpisodes) {
                 const allSubDone = module.subEpisodes.every(s => isItemCompleted(`${module.id}-${s.id}`));
@@ -685,8 +758,20 @@ export const Dashboard: React.FC = () => {
                   }`}
                   onClick={() => playItem(module.id, null)}
                 >
-                  <div className="aspect-video bg-zinc-800 relative flex items-center justify-center group-hover:bg-zinc-700 transition-colors">
-                    <PlayCircle className={`w-10 h-10 transition-colors ${isActive ? 'text-indigo-400' : 'text-zinc-500 group-hover:text-indigo-400'}`} />
+                  <div className="aspect-video bg-zinc-800 relative flex items-center justify-center overflow-hidden">
+                    {getThumbnailUrl(module) ? (
+                      <>
+                        <img
+                          src={getThumbnailUrl(module)!}
+                          alt={module.title}
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
+                      </>
+                    ) : (
+                      <div className="absolute inset-0 bg-zinc-800 group-hover:bg-zinc-700 transition-colors" />
+                    )}
+                    <PlayCircle className={`relative z-10 w-10 h-10 drop-shadow-lg transition-colors ${isActive ? 'text-indigo-400' : 'text-white/80 group-hover:text-indigo-400'}`} />
                   </div>
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-2">
@@ -713,7 +798,7 @@ export const Dashboard: React.FC = () => {
                 </div>
               );
             })}
-          </div>
+          </div>}
 
           {/* LINE Contact footer */}
           <div className="mt-10 pt-6 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
