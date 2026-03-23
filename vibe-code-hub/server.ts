@@ -6,7 +6,7 @@ const { JWT } = Mux;
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = 5000;
 
   // API routes
   app.get("/api/health", (req, res) => {
