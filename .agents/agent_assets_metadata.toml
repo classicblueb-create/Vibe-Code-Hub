@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "aSQ5yUOmy43CqM61Bxvnf"
+uri = "file://vibe-code-hub/public/icon-512.png"
+type = "image"
+title = "Vibe Code Hub App Icon"
