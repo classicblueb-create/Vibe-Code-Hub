@@ -1,0 +1,53 @@
+นี่คือ Playback ID ของรายการวีดีโอทั้งหมด โปรดทำการอัพเดทให้ฉันตามลพดับและเปลี่ยนชื่อให้ด้วย
+พร้อมทั้งใส่รายละเอียดของวีดีโอให้ด้วย
+
+บทที่ 2 ชื่อ  Module 1 - ปูพื้นฐาน Vibe Coding & Ecosystem
+ Playback ID : RS7t2OGfWFbQQJizsPSOU9XF5UMirLrYUfjUVHsTfpQ
+รายละเอียด: 
+ทำความรู้จัก Vibe Coding: ก้าวเข้าสู่โลกใหม่ของการพัฒนาแอปพลิเคชันที่เปลี่ยนจาก "Code-First" มาเป็น "Vibe-First" โดยใช้ความรู้สึกและสไตล์นำทาง 
+The Dream Team Ecosystem: ทำความรู้จักเครื่องมือหลักจาก Google ทั้ง Gemini (สมอง), Stitch (ตา), AI Studio (มือ), และ Antigravity (ผู้ช่วย Senior) ที่จะทำงานร่วมกันเพื่อสร้างแอป 
+รูปแบบเว็บไซต์ทำเงิน: เจาะลึกความแตกต่างระหว่าง Landing Page และ SaaS/Web App เพื่อให้เลือกสร้างได้ตรงโจทย์ธุรกิจ 
+
+บทที่ 3 ชื่อ Module 2 - จากไอเดียสู่แผนทีรันได้จริง (Master PRD)
+ Playback ID :Xwqc011h00ydW1l01o1HNjYQo02OmfcFjk02cOfX01hBa5I01M
+รายละเอียด: 
+PRD คืออะไร ทำไมถึงสำคัญ: เรียนรู้วิธีเปลี่ยนไอเดียฟุ้งๆ ให้กลายเป็น "แผนที่" ที่ชัดเจน เพื่อป้องกันไม่ให้ AI หลงทาง 
+Master PRD Prompt: แจกสูตรคำสั่ง (Prompt) ลับที่ให้ AI สวมบทบาทเป็น Product Manager ช่วยร่างโครงสร้างแอปให้สมบูรณ์แบบ 
+Minimal PRD Checklist: 5 คำถามสำคัญที่ต้องตอบให้ได้ก่อนเริ่มสร้างแอป (เป้าหมาย, ผู้ใช้งาน, โฟลว์การใช้งาน, ฟีเจอร์หลัก, และดีไซน์)
+
+บทที่ 4 ชื่อ Module 3: Stitch จัด Vibe หน้าตาให้โดนใจ
+ Playback ID :H017Npef4FfcqKCrU532a01tG8q6UP4qE00WDLHdXzre1o
+รายละเอียด 
+เสกหน้าเว็บจากจินตนาการ: สอนใช้ AI Stitch แปลงข้อความ ภาพสเก็ตช์ หรือแม้แต่ลิงก์เว็บที่ชอบ ให้กลายเป็นหน้าจอแอป (UI) ที่สวยงาม 
+ส่งออกไปเขียนโค้ดต่อ: วิธีเตรียม UI ให้พร้อม แล้วส่งออกแบบคลิกเดียวไปยัง Google AI Studio เพื่อสร้างแอปที่ใช้งานได้จริง 
+
+บทที่ 5 ขอใส่ไว้ 3 วีดีโอ 3 ตอนใส่เปนดรอฟดาวอยุ่ในบทที่ 5 เหมือนกัน
+ชื่อ Module 4 ตอนที่1: AI Studio ปั้น Frontend ในพริบตา
+ Playback ID : hKEWzqiPkTzdlHxOY2teh3ywg37tyXwZB2KpwpIpvX4
+ชื่อ Module 4 ตอนที่2: สร้างโปรเจค UGC
+ Playback ID :lG5oBTQ2Pi02X56xyjxBgmegcyFdjAPgfFVE701NQna5s
+ชื่อ Module 4 ตอนที่3: เข้าใจ API KEY และค่าใช้จ่ายของ Google
+ Playback ID :O2moytc3PJBcDdOh9yevIl9LDjzn1BcWZFe8fcIW9H4
+รายละเอียด 
+จากภาพสู่แอปที่คลิกได้: เปลี่ยนดีไซน์จาก Stitch ให้กลายเป็น Frontend โค้ดที่รันได้จริงด้วยพลังของ Google AI Studio 
+Tech Stack สำหรับ Vibe Coder: แนะนำการเลือกใช้ Next.js ซึ่งเป็นตัวเลือกที่ดีที่สุดสำหรับการสร้างเว็บแอปครบวงจรในยุคนี้ 
+สร้าง UGC Generator: Case Study การสร้างระบบรูปภาพและวิดีโอรีวิวสินค้า (UGC) พร้อมวิธีเขียน Prompt สั่งงานแบบ Vibe Coder
+
+
+บทที่ 6 มี 2 วีดีโอ 2ตอน ใส่เปนดรอฟดาวอยุ่ในบทที่ 6 เหมือนกัน
+ชื่อ Module 5 ตอนนที่1: Antigravity - ใส่หัวใจให้ระบบ (Backend & Logic)
+ Playback ID :e5009LoId9KVy011EBUMwki01GI5QD8kNNiZCtYiPMrwwM
+ชื่อ Module 5 ตอนนที่2: Antigravity - ใส่หัวใจให้ระบบ (Backend & Logic)
+ Playback ID : 301IyBA7qzIzPPP9fTOR4E13gXuxbklVVcTvT7UmSIHI
+
+รายละเอียด 
+รู้จัก Antigravity AI Agent: เปิดตัวผู้ช่วยเขียนโค้ดที่คิด วางแผน และเขียนระบบหลังบ้านที่ซับซ้อนให้เรา 
+การทำงานแบบอัตโนมัติ: สอนให้ AI ช่วยเชื่อมต่อ Database, เขียน Logic ยากๆ, และตรวจสอบข้อผิดพลาด (Debug) ให้ตรงจุด 
+ทดสอบเสมือนผู้ใช้จริง: การใช้ฟีเจอร์ Browser Automation เพื่อให้ AI Agent ทดลองคลิกและใช้งานแอปเหมือนเป็นคนจริงๆ เพื่อยืนยันการทำงาน
+
+บทที่7 ชื่อ Module 6: Database & Security
+ Playback ID Aj01dTB2jzBCSkDsb2NcRtuJ9ATnY8hMVYd29inCVpTo
+รายละเอียด
+ฐานข้อมูลที่ Vibe Coder ต้องรู้: แนะนำระบบฐานข้อมูลแบบ All-in-One ที่เหมาะกับการเริ่มต้นทำโปรเจกต์ SaaS 
+สร้างระบบ Authentication: จับมือทำระบบสมัครสมาชิกและล็อกอินผ่าน Email เบื้องต้น 
+กฎเหล็กความปลอดภัย RLS: ทำไม Row Level Security ถึงเป็นเส้นแบ่งระหว่าง "แอปของเล่น" กับ "แอปที่ขายได้" 
