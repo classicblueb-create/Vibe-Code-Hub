@@ -38,9 +38,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const email = currentUser.email;
 
           unsubAccess = onSnapshot(collection(db, 'accessCodes'), (snapshot) => {
-            // ข้าม cache ทุกกรณี — ตัดสินใจเฉพาะจากข้อมูล server จริงเท่านั้น
-            if (snapshot.metadata.fromCache) return;
-
             let hasAccess = false;
             snapshot.forEach((docSnap) => {
               const data = docSnap.data();
@@ -48,12 +45,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 hasAccess = true;
               }
             });
-            setIsVIP(hasAccess);
 
-            if (!hasAccess) {
+            setIsVIP(hasAccess);
+            setLoading(false);
+
+            // ถ้าข้อมูลมาจาก server จริง และไม่มีสิทธิ์ ให้ logout
+            if (!hasAccess && !snapshot.metadata.fromCache) {
               signOut(auth);
             }
-            setLoading(false);
           }, (error) => {
             setIsVIP(false);
             signOut(auth);
