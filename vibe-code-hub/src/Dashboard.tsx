@@ -70,22 +70,33 @@ export const Dashboard: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [playingModuleId, setPlayingModuleId] = useState<number | null>(null);
   const [playbackToken, setPlaybackToken] = useState<string | null>(null);
+  const [isSigned, setIsSigned] = useState(false);
+  const [playerReady, setPlayerReady] = useState(false);
 
   useEffect(() => {
     if (playingModuleId) {
       const module = MODULES_DATA.find(m => m.id === playingModuleId);
       if (module && module.playbackId) {
+        setPlaybackToken(null);
+        setIsSigned(false);
+        setPlayerReady(false);
         fetch(`/api/mux/sign/${module.playbackId}`)
           .then(res => res.json())
           .then(data => {
-            setPlaybackToken(data.token);
+            setIsSigned(data.signed === true);
+            setPlaybackToken(data.signed ? data.token : null);
+            setPlayerReady(true);
           })
           .catch(() => {
-            setPlaybackToken(module.playbackId);
+            setIsSigned(false);
+            setPlaybackToken(null);
+            setPlayerReady(true);
           });
       }
     } else {
       setPlaybackToken(null);
+      setIsSigned(false);
+      setPlayerReady(false);
     }
   }, [playingModuleId]);
 
@@ -305,10 +316,12 @@ export const Dashboard: React.FC = () => {
           {playingModuleId ? (
             <div className="mb-12 bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800">
               <div className="aspect-video bg-black flex items-center justify-center">
-                {playbackToken ? (
+                {!playerReady ? (
+                  <div className="text-zinc-500 animate-pulse">กำลังโหลดวิดีโอ...</div>
+                ) : (
                   <MuxPlayer
                     playbackId={MODULES_DATA.find(m => m.id === playingModuleId)?.playbackId}
-                    tokens={{ playback: playbackToken }}
+                    {...(isSigned && playbackToken ? { tokens: { playback: playbackToken } } : {})}
                     metadata={{
                       video_id: playingModuleId.toString(),
                       video_title: MODULES_DATA.find(m => m.id === playingModuleId)?.title,
@@ -317,8 +330,6 @@ export const Dashboard: React.FC = () => {
                     className="w-full h-full"
                     autoPlay
                   />
-                ) : (
-                  <div className="text-zinc-500 animate-pulse">กำลังโหลดวิดีโอ...</div>
                 )}
               </div>
               <div className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
