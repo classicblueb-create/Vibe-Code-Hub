@@ -20,8 +20,7 @@ export const Login: React.FC = () => {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/');
     } catch (err: any) {
-      setError('Invalid email or password. Please try again.');
-      console.error(err);
+      setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง');
     } finally {
       setLoading(false);
     }
@@ -35,7 +34,7 @@ export const Login: React.FC = () => {
             <Lock className="w-8 h-8 text-indigo-400" />
           </div>
           <h1 className="text-3xl font-bold text-white tracking-tight">Vibe Code Hub</h1>
-          <p className="text-zinc-400 mt-2 text-sm">VIP Access Portal</p>
+          <p className="text-zinc-400 mt-2 text-sm">พอร์ทัลสำหรับสมาชิก VIP</p>
         </div>
 
         {error && (
@@ -46,26 +45,26 @@ export const Login: React.FC = () => {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Email Address</label>
+            <label className="block text-sm font-medium text-zinc-300 mb-2">อีเมล</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-              placeholder="Enter your email"
+              placeholder="กรอกอีเมลของคุณ"
             />
           </div>
-          
+
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Password</label>
+            <label className="block text-sm font-medium text-zinc-300 mb-2">รหัสผ่าน</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-              placeholder="Enter your password"
+              placeholder="กรอกรหัสผ่านของคุณ"
             />
           </div>
 
@@ -74,24 +73,13 @@ export const Login: React.FC = () => {
             disabled={loading}
             className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Authenticating...' : 'Sign In'}
-          </button>
-          
-          <button
-            type="button"
-            onClick={() => {
-              localStorage.setItem('isDemo', 'true');
-              navigate('/');
-            }}
-            className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-3 px-4 rounded-xl transition-colors"
-          >
-            Demo Access
+            {loading ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบ'}
           </button>
         </form>
-        
+
         <div className="mt-8 text-center text-xs text-zinc-500">
-          <p>Access is strictly restricted to authorized personnel.</p>
-          <p>Self-registration is disabled.</p>
+          <p>การเข้าถึงจำกัดเฉพาะสมาชิกที่ได้รับอนุญาตเท่านั้น</p>
+          <p>ไม่อนุญาตให้สมัครด้วยตนเอง</p>
         </div>
       </div>
     </div>

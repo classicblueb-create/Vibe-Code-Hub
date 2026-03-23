@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
-import { LogOut, PlayCircle, ShieldCheck, ShieldAlert, CheckCircle2, Circle, Menu, X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { collection, query, where, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { LogOut, PlayCircle, ShieldCheck, CheckCircle2, Circle, Menu, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { collection, query, where, onSnapshot, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import { handleFirestoreError, OperationType } from './firestoreErrorHandler';
 import MuxPlayer from '@mux/mux-player-react';
@@ -24,49 +23,49 @@ const MODULES_DATA = [
   {
     id: 2,
     title: "Introduction to Vibe Coding",
-    description: "Get started with the basics of AI-assisted development and setting up your environment.",
+    description: "เริ่มต้นกับพื้นฐานการพัฒนาด้วย AI และการตั้งค่าสภาพแวดล้อม",
     duration: "10:24",
     playbackId: "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe"
   },
   {
     id: 3,
     title: "Advanced Prompt Engineering",
-    description: "Learn how to write effective prompts for better code generation and problem-solving.",
+    description: "เรียนรู้การเขียน Prompt ที่มีประสิทธิภาพสำหรับการสร้างโค้ดและแก้ปัญหา",
     duration: "15:45",
     playbackId: "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe"
   },
   {
     id: 4,
     title: "Building Scalable Architectures",
-    description: "Design patterns and system architecture for modern web applications.",
+    description: "รูปแบบการออกแบบและสถาปัตยกรรมระบบสำหรับเว็บแอปพลิเคชันสมัยใหม่",
     duration: "22:10",
     playbackId: "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe"
   },
   {
     id: 5,
     title: "State Management Mastery",
-    description: "Deep dive into React state, context, and external stores for complex applications.",
+    description: "เจาะลึก React State, Context และ External Stores สำหรับแอปพลิเคชันซับซ้อน",
     duration: "18:30",
     playbackId: "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe"
   },
   {
     id: 6,
     title: "Security Best Practices",
-    description: "Protecting your applications from common vulnerabilities and securing user data.",
+    description: "ปกป้องแอปพลิเคชันจากช่องโหว่ทั่วไปและรักษาความปลอดภัยข้อมูลผู้ใช้",
     duration: "14:15",
     playbackId: "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe"
   },
   {
     id: 7,
     title: "Deployment and CI/CD",
-    description: "Automating your build and deployment pipelines for seamless delivery.",
+    description: "อัตโนมัติกระบวนการ Build และ Deploy สำหรับการส่งมอบที่ราบรื่น",
     duration: "20:05",
     playbackId: "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe"
   }
 ];
 
 export const Dashboard: React.FC = () => {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout } = useAuth();
   const [progress, setProgress] = useState<Progress[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [playingModuleId, setPlayingModuleId] = useState<number | null>(null);
@@ -76,15 +75,12 @@ export const Dashboard: React.FC = () => {
     if (playingModuleId) {
       const module = MODULES_DATA.find(m => m.id === playingModuleId);
       if (module && module.playbackId) {
-        // Fetch signed token from our backend
         fetch(`/api/mux/sign/${module.playbackId}`)
           .then(res => res.json())
           .then(data => {
             setPlaybackToken(data.token);
           })
-          .catch(err => {
-            console.error("Failed to fetch playback token", err);
-            // Fallback to playbackId if signing fails
+          .catch(() => {
             setPlaybackToken(module.playbackId);
           });
       }
@@ -110,8 +106,8 @@ export const Dashboard: React.FC = () => {
     const q = query(collection(db, 'userProgress'), where('userId', '==', user.uid));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const progressData: Progress[] = [];
-      snapshot.forEach((doc) => {
-        progressData.push({ id: doc.id, ...doc.data() } as Progress);
+      snapshot.forEach((d) => {
+        progressData.push({ id: d.id, ...d.data() } as Progress);
       });
       setProgress(progressData);
     }, (err) => {
@@ -124,7 +120,7 @@ export const Dashboard: React.FC = () => {
     if (!user) return;
     const moduleIdStr = moduleId.toString();
     const existing = progress.find(p => p.moduleId === moduleIdStr);
-    
+
     try {
       if (existing) {
         if (existing.completed) {
@@ -153,14 +149,12 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  // Anti-Right Click
+  // ป้องกันการคลิกขวา
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
     };
-    
     document.addEventListener('contextmenu', handleContextMenu);
-    
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu);
     };
@@ -174,9 +168,9 @@ export const Dashboard: React.FC = () => {
     <div className="min-h-screen bg-zinc-950 text-white flex">
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm md:hidden" 
-          onClick={() => setIsMobileMenuOpen(false)} 
+        <div
+          className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
@@ -187,30 +181,30 @@ export const Dashboard: React.FC = () => {
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex justify-between items-center mb-4 md:mb-4">
-          <h2 className="font-bold text-lg">Course Progress</h2>
-          <button 
-            onClick={() => setIsMobileMenuOpen(false)} 
+          <h2 className="font-bold text-lg">ความคืบหน้า</h2>
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
             className="p-2 -mr-2 text-zinc-400 hover:text-white md:hidden"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         <div className="mb-8 bg-zinc-900/50 p-4 rounded-xl border border-zinc-800/50">
           <div className="flex justify-between items-end mb-2">
-            <span className="text-sm text-zinc-400 font-medium">Overall</span>
+            <span className="text-sm text-zinc-400 font-medium">ภาพรวม</span>
             <span className="text-2xl font-bold text-indigo-400 leading-none">{progressPercentage}%</span>
           </div>
           <div className="w-full bg-zinc-800 rounded-full h-2.5 overflow-hidden">
-            <div 
-              className="bg-gradient-to-r from-indigo-500 to-violet-500 h-full rounded-full transition-all duration-700 ease-out relative" 
+            <div
+              className="bg-gradient-to-r from-indigo-500 to-violet-500 h-full rounded-full transition-all duration-700 ease-out relative"
               style={{ width: `${progressPercentage}%` }}
             >
               <div className="absolute top-0 right-0 bottom-0 left-0 bg-white/20 animate-pulse"></div>
             </div>
           </div>
           <p className="text-xs text-zinc-500 mt-3 text-center">
-            {completedCount} of {TOTAL_MODULES} modules completed
+            เรียนจบแล้ว {completedCount} จาก {TOTAL_MODULES} บทเรียน
           </p>
         </div>
 
@@ -218,8 +212,8 @@ export const Dashboard: React.FC = () => {
           {MODULES_DATA.map((module) => {
             const isCompleted = progress.find(p => p.moduleId === module.id.toString())?.completed;
             return (
-              <button 
-                key={module.id} 
+              <button
+                key={module.id}
                 onClick={() => {
                   setPlayingModuleId(module.id);
                   setIsMobileMenuOpen(false);
@@ -235,7 +229,7 @@ export const Dashboard: React.FC = () => {
                 )}
                 <div className="flex flex-col min-w-0">
                   <span className={`font-medium truncate ${isCompleted ? 'text-zinc-200' : 'text-zinc-500'}`}>
-                    Module {module.id}
+                    บทที่ {module.id}
                   </span>
                   <span className="text-xs text-zinc-500 truncate" title={module.title}>
                     {module.title}
@@ -252,7 +246,7 @@ export const Dashboard: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center gap-3">
-                <button 
+                <button
                   className="md:hidden p-2 -ml-2 text-zinc-400 hover:text-white transition-colors"
                   onClick={() => setIsMobileMenuOpen(true)}
                 >
@@ -270,7 +264,7 @@ export const Dashboard: React.FC = () => {
                   className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors text-sm font-medium"
                 >
                   <LogOut className="w-4 h-4" />
-                  Sign Out
+                  ออกจากระบบ
                 </button>
               </div>
             </div>
@@ -280,31 +274,31 @@ export const Dashboard: React.FC = () => {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
             <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
-              <div className="text-zinc-500 text-sm mb-1">Modules Completed</div>
+              <div className="text-zinc-500 text-sm mb-1">บทเรียนที่เรียนจบ</div>
               <div className="text-3xl font-bold">{completedCount} / {TOTAL_MODULES}</div>
             </div>
             <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
-              <div className="text-zinc-500 text-sm mb-1">Overall Progress</div>
+              <div className="text-zinc-500 text-sm mb-1">ความคืบหน้าโดยรวม</div>
               <div className="text-3xl font-bold text-indigo-400">{progressPercentage}%</div>
             </div>
             <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
-              <div className="text-zinc-500 text-sm mb-1">Status</div>
+              <div className="text-zinc-500 text-sm mb-1">สถานะ</div>
               <div className="text-3xl font-bold text-emerald-400">
-                {progressPercentage === 100 ? "Completed" : "In Progress"}
+                {progressPercentage === 100 ? "เรียนจบแล้ว" : "กำลังเรียน"}
               </div>
             </div>
           </div>
 
           <div className="mb-10">
             <h1 className="text-3xl font-bold mb-2">
-              {playingModuleId 
-                ? `Module ${playingModuleId}: ${MODULES_DATA.find(m => m.id === playingModuleId)?.title}` 
-                : "Welcome to the VIP Portal"}
+              {playingModuleId
+                ? `บทที่ ${playingModuleId}: ${MODULES_DATA.find(m => m.id === playingModuleId)?.title}`
+                : "ยินดีต้อนรับสู่พอร์ทัล VIP"}
             </h1>
             <p className="text-zinc-400">
-              {playingModuleId 
-                ? MODULES_DATA.find(m => m.id === playingModuleId)?.description 
-                : "Exclusive video content for authorized members only."}
+              {playingModuleId
+                ? MODULES_DATA.find(m => m.id === playingModuleId)?.description
+                : "เนื้อหาวิดีโอพิเศษสำหรับสมาชิกที่ได้รับอนุญาตเท่านั้น"}
             </p>
           </div>
 
@@ -313,15 +307,8 @@ export const Dashboard: React.FC = () => {
               <div className="aspect-video bg-black flex items-center justify-center">
                 {playbackToken ? (
                   <MuxPlayer
-                    playbackId={(() => {
-                      const id = MODULES_DATA.find(m => m.id === playingModuleId)?.playbackId;
-                      console.log("MuxPlayer playbackId:", id);
-                      return id;
-                    })()}
-                    tokens={{ playback: (() => {
-                      console.log("MuxPlayer playbackToken:", playbackToken);
-                      return playbackToken;
-                    })() }}
+                    playbackId={MODULES_DATA.find(m => m.id === playingModuleId)?.playbackId}
+                    tokens={{ playback: playbackToken }}
                     metadata={{
                       video_id: playingModuleId.toString(),
                       video_title: MODULES_DATA.find(m => m.id === playingModuleId)?.title,
@@ -331,7 +318,7 @@ export const Dashboard: React.FC = () => {
                     autoPlay
                   />
                 ) : (
-                  <div className="text-zinc-500 animate-pulse">Loading secure player...</div>
+                  <div className="text-zinc-500 animate-pulse">กำลังโหลดวิดีโอ...</div>
                 )}
               </div>
               <div className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -354,30 +341,29 @@ export const Dashboard: React.FC = () => {
             </div>
           ) : (
             <div className="mb-12 bg-gradient-to-br from-indigo-900/20 to-zinc-900 p-8 rounded-2xl border border-indigo-500/20">
-              <h2 className="text-3xl font-bold mb-4">Ready to continue?</h2>
+              <h2 className="text-3xl font-bold mb-4">พร้อมเรียนต่อหรือยัง?</h2>
               <p className="text-zinc-400 mb-6 max-w-2xl">
-                {progressPercentage === 100 
-                  ? "Congratulations! You've completed all modules. Feel free to review any of them."
-                  : "You're making great progress! Pick up where you left off or jump into the next module to keep learning."}
+                {progressPercentage === 100
+                  ? "ยินดีด้วย! คุณเรียนจบทุกบทเรียนแล้ว สามารถกลับมาทบทวนได้ตลอดเวลา"
+                  : "คุณกำลังคืบหน้าได้ดีมาก! เรียนต่อจากจุดที่หยุดไว้หรือเริ่มบทถัดไปเพื่อเรียนรู้เพิ่มเติม"}
               </p>
-              <button 
+              <button
                 onClick={() => {
                   const nextModule = MODULES_DATA.find(m => !progress.find(p => p.moduleId === m.id.toString())?.completed);
                   setPlayingModuleId(nextModule ? nextModule.id : 1);
                 }}
                 className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-medium transition-colors flex items-center gap-2"
               >
-                {progressPercentage === 100 ? "Review Modules" : "Continue Learning"}
+                {progressPercentage === 100 ? "ทบทวนบทเรียน" : "เรียนต่อ"}
               </button>
             </div>
           )}
 
           {playingModuleId && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Video Content */}
               {MODULES_DATA.map((module) => (
                 <div key={module.id} className="bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 group hover:border-indigo-500/50 transition-colors">
-                  <div 
+                  <div
                     className="aspect-video bg-zinc-800 relative flex items-center justify-center group-hover:bg-zinc-700 transition-colors cursor-pointer"
                     onClick={() => setPlayingModuleId(module.id)}
                   >
@@ -389,11 +375,13 @@ export const Dashboard: React.FC = () => {
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-400 text-xs font-medium rounded">Premium</span>
-                        <span className="text-xs text-zinc-500">Module {module.id}</span>
+                        <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-400 text-xs font-medium rounded">พรีเมียม</span>
+                        <span className="text-xs text-zinc-500">บทที่ {module.id}</span>
                       </div>
                       <button onClick={() => toggleProgress(module.id)} className="text-zinc-500 hover:text-indigo-400 transition-colors">
-                        {progress.find(p => p.moduleId === module.id.toString())?.completed ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <Circle className="w-5 h-5" />}
+                        {progress.find(p => p.moduleId === module.id.toString())?.completed
+                          ? <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                          : <Circle className="w-5 h-5" />}
                       </button>
                     </div>
                     <h3 className="font-semibold text-lg mb-1 group-hover:text-indigo-400 transition-colors">{module.title}</h3>
